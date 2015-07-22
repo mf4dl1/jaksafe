@@ -362,6 +362,21 @@ class Plugin(object):
             self.show_extent_selector)
         self.add_action(self.action_extent_selector)
 
+    def _create_dala_configuration_action(self):
+        """Create DaLA configuration dialog."""
+        icon = resources_path('img', 'icons', 'set-extents-tool.svg')
+        self.action_extent_selector = QAction(
+            QIcon(icon),
+            self.tr('InaSAFE DaLA Configuration'),
+            self.iface.mainWindow())
+        self.action_extent_selector.setStatusTip(self.tr(
+            'Configure DaLA parameters for InaSAFE'))
+        self.action_extent_selector.setWhatsThis(self.tr(
+            'Configure DaLA parameters for InaSAFE'))
+        self.action_extent_selector.triggered.connect(
+            self.show_dala_configuration)
+        self.add_action(self.action_extent_selector)
+
     def _create_test_layers_action(self):
         """Create action for adding layers (developer mode, non final only)."""
         final_release = release_status() == 'final'
@@ -430,6 +445,7 @@ class Plugin(object):
         self._create_batch_runner_action()
         self._create_impact_merge_action()
         self._create_save_scenario_action()
+        self._create_dala_configuration_action()
 
         # Hook up a slot for when the dock is hidden using its close button
         # or  view-panels
@@ -535,6 +551,14 @@ class Plugin(object):
             self.dock_widget.define_user_analysis_extent)
         # Needs to be non modal to support hide -> interact with map -> show
         widget.show()  # non modal
+
+    def show_dala_configuration(self):
+        """Show DaLA configuration dialog."""
+        from safe.gui.tools.dala_configuration_dialog import DalaConfigurationDialog
+
+        dialog = DalaConfigurationDialog(
+            self.iface.mainWindow())
+        dialog.exec_() # modal
 
     def show_minimum_needs(self):
         """Show the minimum needs dialog."""
